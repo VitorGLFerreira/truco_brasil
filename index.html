@@ -1,0 +1,222 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Truco Brasil</title>
+<style>
+:root{--gold:#e8b931;--red:#d94040;--blue:#4a8df0;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;background:#06261a radial-gradient(circle at 50% 20%,#0f6a40,#06261a 70%);color:#fff;font-family:system-ui,sans-serif}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:12px 18px;font-weight:700;color:#fff;background:#1c7a4a;transition:.15s}
+button:hover{filter:brightness(1.15)}button:disabled{opacity:.4;pointer-events:none}
+.gold{background:linear-gradient(#f5d35a,#d9a016);color:#2a1d00}.red{background:var(--red)}
+.scr{display:none;max-width:900px;margin:0 auto;padding:14px}.scr.on{display:block}
+.logo{font:900 clamp(40px,11vw,80px)/1 Georgia,serif;text-align:center;color:var(--gold);text-shadow:0 4px 0 #7a5a00,0 10px 24px #000a;margin-top:18px}
+.menu{display:grid;gap:12px;max-width:360px;margin:20px auto}
+.prof{display:flex;gap:12px;align-items:center;justify-content:center;background:#0007;border:1px solid #fff3;border-radius:16px;padding:12px;max-width:420px;margin:18px auto}
+.ach{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;font-size:13px}.ach span{padding:4px 10px;border-radius:99px;background:#0006;opacity:.45}.ach .got{opacity:1;background:#6b4f00}
+#hud{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;text-align:center}
+.tm{flex:1;padding:8px;border-radius:12px;background:#0007}.tm b{font-size:28px}.tm small{display:block;opacity:.7}.t0{border:2px solid var(--blue)}.t1{border:2px solid var(--red)}
+.mid{padding:8px 14px;border-radius:12px;background:linear-gradient(#f5d35a,#d9a016);color:#2a1d00}.mid b{font-size:28px}
+#tbl{display:grid;grid-template-areas:". t ." "l c r" ". b .";grid-template-columns:auto 1fr auto;gap:8px;background:radial-gradient(ellipse,#12804a,#0a4a2c);border:8px solid #5a3a1a;border-radius:28px;padding:12px;min-height:440px;align-items:center;justify-items:center}
+.seat{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:13px}.seat.t{grid-area:t}.seat.l{grid-area:l}.seat.r{grid-area:r}.seat.b{grid-area:b}
+.hand{display:flex;gap:6px}.seat.l .hand,.seat.r .hand{flex-direction:column;gap:2px}
+.nm{padding:2px 10px;border-radius:99px;background:#0008}.nm.cur{box-shadow:0 0 14px 4px var(--gold)}
+.ctr{grid-area:c;display:grid;grid-template:repeat(3,auto)/repeat(3,auto);gap:4px;justify-items:center;align-items:center}
+.card{width:clamp(46px,12vw,70px);aspect-ratio:2/3;background:#fff;color:#111;border-radius:8px;position:relative;box-shadow:0 3px 8px #0007;font-family:Georgia,serif}
+.card b{position:absolute;left:5px;top:3px;font-size:clamp(12px,3.4vw,18px)}
+.card b.bt{left:auto;top:auto;right:5px;bottom:3px;transform:rotate(180deg)}
+.card i{position:absolute;left:5px;top:clamp(16px,4.6vw,24px);font-style:normal;font-size:clamp(10px,3vw,15px)}
+.card span{position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(24px,7vw,40px)}
+.rd{color:#c62828}.man{outline:3px solid var(--gold)}
+.back{background:repeating-linear-gradient(45deg,#1b3a8a 0 6px,#2a56c4 6px 12px);border:3px solid #fff}
+.sm{width:clamp(30px,8vw,44px)}
+.hand.on .card{cursor:pointer}.hand.on .card:hover{transform:translateY(-12px);box-shadow:0 0 16px var(--gold)}
+.deal{animation:dl .45s backwards}@keyframes dl{from{transform:translateY(-70px) scale(.5);opacity:0}}
+.pl{animation:pl .35s}@keyframes pl{from{transform:translateY(80px) scale(1.3);opacity:.3}}
+.win{outline:4px solid #ffe066;box-shadow:0 0 20px #ffe066}
+.bar{display:flex;gap:10px;justify-content:center;margin:12px 0}.bar button{min-width:150px}
+#hist{font-size:13px;background:#0006;border-radius:12px;padding:10px;line-height:1.6}
+#fx{position:fixed;inset:0;display:none;place-items:center;pointer-events:none;z-index:9;text-align:center;padding:20px;font:900 clamp(34px,10vw,90px) Georgia,serif;color:var(--gold);text-shadow:0 0 30px var(--red),0 4px 0 #000}
+#fx.z{animation:z .5s}@keyframes z{from{transform:scale(2.4);opacity:0}}
+#mod,#end{position:fixed;inset:0;background:#000b;display:none;place-items:center;z-index:8;padding:12px}
+.box{background:#0b2d1e;border:2px solid var(--gold);border-radius:18px;padding:22px;text-align:center;max-width:94vw;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}.box>*{flex-basis:100%;margin:4px 0}.box button{flex-basis:auto}
+.big{font:900 clamp(36px,9vw,64px) Georgia,serif;color:var(--gold);animation:pu 1s infinite alternate}@keyframes pu{to{transform:scale(1.1)}}
+input{font:inherit;padding:8px;border-radius:8px;border:0;margin-left:6px}
+h2{font-family:Georgia,serif;color:var(--gold)}.rules p{line-height:1.55}
+.gm{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:18px 0}.gc{background:#0009;border:2px solid var(--gold);border-radius:18px;padding:16px;text-align:center;display:grid;gap:8px;align-content:start}.gc .ic{font:700 38px Georgia,serif;color:#fff;letter-spacing:2px}.gc h2{margin:0}
+.tb{background:radial-gradient(ellipse,var(--f1,#12804a),var(--f2,#0a4a2c));border:8px solid #5a3a1a;border-radius:28px;padding:12px;display:grid;gap:14px;justify-items:center;min-height:430px;align-content:space-between}.row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}.pseat{background:#0008;border-radius:12px;padding:6px 10px;text-align:center;font-size:13px;display:inline-block}.pseat.cur{box-shadow:0 0 14px 4px var(--gold)}.pseat.f{opacity:.45}.hand2{display:flex;gap:4px;justify-content:center;margin-top:4px}.sel{transform:translateY(-14px);outline:3px solid var(--gold)}.hand2 .card{cursor:pointer}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style></head><body>
+<div id=menu class="scr on"><div class=logo>♠ TRUCO ♥<br>BRASIL</div><div id=prof class=prof></div>
+<div class=gm><div class=gc><div class=ic>♠ ♥ ♣</div><h2>Truco</h2><p>Chame o truco, blefe e vença seus adversários!</p><button class=gold onclick="start(2)">JOGAR TRUCO</button><button onclick="start(4)">Truco 2x2 com parceiro</button></div><div class=gc><div class=ic>🪙 A♠ K♠</div><h2>Poker</h2><p>Use sua estratégia e forme a melhor mão!</p><button class=gold onclick="setup('pk')">JOGAR POKER</button></div><div class=gc><div class=ic>4♥ 5♥ 6♥</div><h2>Cacheta</h2><p>Monte suas combinações e seja o primeiro a bater!</p><button class=gold onclick="setup('ck')">JOGAR CACHETA</button></div></div><div class=bar><button onclick="show('rules')">REGRAS DO TRUCO</button><button onclick="show('cfg')">CONFIGURAÇÕES</button></div><div id=hl style="text-align:center;font-size:13px;margin-top:10px"></div><div id=ach class=ach></div></div>
+<div id=rules class="scr rules"><h2>Regras (Truco Paulista)</h2>
+<p>Baralho de 40 cartas (sem 8, 9, 10 e curingas). Cada jogador recebe 3 cartas. A carta <b>vira</b> define a <b>manilha</b>: a carta seguinte na ordem 4-5-6-7-Q-J-K-A-2-3. Entre as manilhas: Paus (zap) &gt; Copas &gt; Espadas &gt; Ouros.</p>
+<p>Demais cartas, da mais forte à mais fraca: 3, 2, A, K, J, Q, 7, 6, 5, 4. Cada mão tem até 3 rodadas; vence quem ganhar 2. Se a primeira empatar, a segunda decide; se a segunda empatar, vale a primeira; se tudo empatar, ninguém pontua.</p>
+<p>A mão vale 1 ponto. TRUCO sobe para 3; o adversário pode aceitar, correr (quem pediu ganha o valor anterior) ou aumentar para 6, depois 9 e 12. Quem pediu o último aumento não pode pedir de novo. Vence a partida quem chegar a 12 pontos. No 2x2 você joga com o Parceiro (azul) contra os Oponentes (vermelhos).</p>
+<button onclick="show('menu')">Voltar</button></div>
+<div id=cfg class=scr></div>
+<div id=game class=scr><div id=hud></div><div id=tbl></div><div class=bar><button id=tr class=gold onclick="clickTr()">TRUCO</button><button class=red onclick="quit()">Sair</button></div><div id=hist></div></div>
+<div id=set class=scr></div><div id=pk class=scr><div id=pkh style="text-align:center;margin-bottom:8px"></div><div id=pkt class=tb></div><div class=bar id=pka></div><div class=bar><button onclick="pkEnd()">Encerrar mesa</button><button class=red onclick="quit()">Sair</button></div><div id=pkl style="font-size:13px;background:#0006;border-radius:12px;padding:10px;line-height:1.6"></div></div><div id=ck class=scr><div id=ckh style="text-align:center;margin-bottom:8px"></div><div id=ckt class=tb></div><div class=bar id=cka style="flex-wrap:wrap"></div><div id=ckl style="font-size:13px;background:#0006;border-radius:12px;padding:10px;line-height:1.6"></div></div><div id=fx></div><div id=mod></div><div id=end></div>
+<script>
+const S=['♦','♠','♥','♣'],R=['4','5','6','7','Q','J','K','A','2','3'],NX={1:3,3:6,6:9,9:12},NM={3:'TRUCO',6:'SEIS',9:'NOVE',12:'DOZE'},AV=['😎','🤠','🧑‍🌾','👑','🦊'];
+const $=i=>document.getElementById(i);
+let P;try{P=JSON.parse(localStorage.getItem('tb'))}catch(e){}
+P=Object.assign({name:'Jogador',xp:0,w:0,l:0,d:1,snd:1,av:0,hw:0,t12:0},P||{});
+const save=()=>{try{localStorage.setItem('tb',JSON.stringify(P))}catch(e){}};
+const AC=[['Primeira vitória',p=>p.w>=1],['Veterano: 10 vitórias',p=>p.w>=10],['Mestre: vencer no Difícil',p=>p.hw],['Doze: mão de 12 pontos',p=>p.t12]];
+let ac;function beep(f,d=.08){if(!P.snd)return;try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;o.type='triangle';g.gain.value=.08;o.connect(g);g.connect(ac.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+d);o.stop(ac.currentTime+d)}catch(e){}}
+function show(id){document.querySelectorAll('.scr').forEach(e=>e.classList.toggle('on',e.id==id));if(id=='menu')home();if(id=='cfg')cfg()}
+function home(){const t=P.w+P.l;$('prof').innerHTML=`<span style="font-size:42px">${AV[P.av]}</span><div><b>${P.name}</b><br>Nível ${1+(P.xp/100|0)} · XP ${P.xp%100}/100<br>${P.w} vitórias, ${P.l} derrotas (${t?Math.round(P.w/t*100):0}%)</div>`;$('ach').innerHTML=AC.map(a=>`<span class="${a[1](P)?'got':''}">🏆 ${a[0]}</span>`).join('')}
+function cfg(){$('cfg').innerHTML=`<h2>Configurações</h2><p>Nome<input maxlength=14 value="${P.name}" oninput="P.name=this.value||'Jogador';save()"></p><p>Avatar: ${AV.map((a,i)=>`<button class="${i==P.av?'gold':''}" onclick="P.av=${i};save();cfg()">${a}</button>`).join(' ')}</p><p>Dificuldade: ${['Fácil','Médio','Difícil'].map((a,i)=>`<button class="${i==P.d?'gold':''}" onclick="P.d=${i};save();cfg()">${a}</button>`).join(' ')}</p><p><button onclick="P.snd^=1;save();cfg()">Som: ${P.snd?'ligado':'desligado'}</button></p><button onclick="show('menu')">Voltar</button>`}
+let G;
+const sleep=ms=>{const g=G;return new Promise((r,j)=>setTimeout(()=>g.dead?j():r(),ms))};
+const shuf=a=>{for(let i=a.length;--i;){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const pw=c=>c.r==G.man?20+c.s:c.r;
+const pv=c=>c.r==G.man?.8+c.s*.06:c.r/12;
+function start(n){G={n,sc:[0,0],hist:[],first:0,cur:-1,names:n==4?[P.name,'Oponente D','Parceiro','Oponente E']:[P.name,'Adversário'],pos:n==4?['b','r','t','l']:['b','t']};$('end').style.display='none';show('game');match()}
+function quit(){G.dead=true;$('mod').style.display='none';$('fx').style.display='none';show('menu')}
+async function match(){const g=G;try{while(g.sc[0]<12&&g.sc[1]<12){await hand();g.first=(g.first+1)%g.n}fin()}catch(e){if(!g.dead)console.error(e)}}
+function ev(r){const a=r.filter(x=>x==0).length,b=r.filter(x=>x==1).length;if(a>1)return 0;if(b>1)return 1;if(r.length>=2&&(r[0]<0||r[1]<0)){if(r[0]>=0&&r[1]<0)return r[0];if(r[0]<0&&r[1]>=0)return r[1]}if(r.length==3)return r[0]>=0?r[0]:r[2]>=0?r[2]:-1;return null}
+async function flash(t,ms){const f=$('fx');f.textContent=t;f.style.display='grid';f.classList.remove('z');void f.offsetWidth;f.classList.add('z');beep(500,.15);await sleep(ms);f.style.display='none'}
+async function hand(){const n=G.n,dk=[];for(let r=0;r<10;r++)for(let s=0;s<4;s++)dk.push({r,s});shuf(dk);
+G.vira=dk.pop();G.man=(G.vira.r+1)%10;G.h=[...Array(n)].map(()=>[dk.pop(),dk.pop(),dk.pop()]);
+G.val=1;G.lr=-1;G.rw=[];G.tbl=Array(n).fill(null);G.over=false;G.win=null;G.ws=-1;G.last=-1;G.deal=true;beep(300);render();G.deal=false;await sleep(900);
+let lead=G.first,res=null;
+for(let rd=0;rd<3&&res===null&&!G.over;rd++){
+G.tbl=Array(n).fill(null);G.ws=-1;
+for(let k=0;k<n&&!G.over;k++)await turn((lead+k)%n);
+if(G.over)break;
+const ps=G.tbl.map(pw),mx=Math.max(...ps),w=ps.map((p,i)=>p==mx?i:-1).filter(i=>i>=0),tm=[...new Set(w.map(i=>i%2))];
+if(tm.length>1){G.rw.push(-1);G.cur=-1;render();await flash('Empate!',900)}else{G.rw.push(tm[0]);lead=w[0];G.ws=w[0];G.cur=-1;render();await sleep(1100)}
+res=ev(G.rw)}
+const w=G.over?G.win:res,p=w<0?0:G.val;
+if(w>=0)G.sc[w]=Math.min(12,G.sc[w]+p);
+G.hist.unshift({w,p,r:G.rw.map(x=>x<0?'E':x?'V':'A').join(' ')+(G.over?' (correu)':'')});
+if(w==0&&p==12){P.t12=1;save()}
+G.cur=-1;render();await flash(w<0?'Mão empatada':(w?'Vermelha':'Azul')+' +'+p,1300)}
+function humanTurn(){return new Promise(r=>{G.hres=r;G.myTurn=true;G.cur=0;render()})}
+function clk(i){if(!G.myTurn)return;const c=G.h[0][i];if(!c)return;G.myTurn=false;G.hres({card:c})}
+function clickTr(){if(G.myTurn&&G.val<12&&G.lr!=0){G.myTurn=false;G.hres({truco:1})}}
+function play(s,c){G.h[s]=G.h[s].filter(x=>x!==c);G.tbl[s]=c;G.last=s;G.ws=-1;beep(220+s*40);render()}
+async function turn(s){G.cur=s;render();
+if(s==0){while(1){const a=await humanTurn();if(a.truco){await raise(0);if(G.over)return;continue}play(0,a.card);return}}
+await sleep(750);const t=s%2;
+if(G.val<12&&G.lr!=t&&aiRaise(s)){await raise(t);if(G.over)return}
+play(s,aiCard(s))}
+function hs(s){const v=G.h[s].map(pv).sort((a,b)=>b-a).slice(0,2);let x=v.reduce((a,b)=>a+b,0)/(v.length||1);const r=G.rw;if(r.length&&r[0]==s%2)x+=.15;if(r.length&&r[0]>=0&&r[0]!=s%2)x-=.1;return x}
+const ts=t=>Math.max(...[...Array(G.n)].map((_,i)=>i).filter(i=>i%2==t).map(hs));
+function aiRaise(s){const x=hs(s);return (x>.72&&Math.random()<[.15,.3,.4][P.d])||(P.d>0&&x<.35&&Math.random()<.04*P.d)}
+function aiAns(nv,t){const x=ts(t)+(Math.random()-.5)*(.34-.12*P.d);if(x>.82&&nv<12&&Math.random()<.2+.2*P.d)return 'u';return x>.3+.04*nv+(P.d?0:.05)?'a':'r'}
+function aiCard(s){const h=G.h[s].slice().sort((a,b)=>pw(a)-pw(b));if(!P.d&&Math.random()<.6)return h[Math.random()*h.length|0];
+const t=G.tbl.map((c,i)=>c?{i,p:pw(c)}:null).filter(x=>x);
+if(!t.length)return G.rw.length?h[h.length-1]:(h.length>1&&Math.random()<.5?h[h.length>>1]:h[h.length-1]);
+const b=t.reduce((a,c)=>c.p>a.p?c:a);
+if(b.i%2==s%2&&P.d)return h[0];
+return h.find(c=>pw(c)>b.p)||h[0]}
+function ask(nv){return new Promise(r=>{const m=$('mod');m.style.display='grid';m.innerHTML=`<div class=box><h2>${NM[nv]}! A mão vai valer ${nv}</h2><button onclick="rep('a')">ACEITAR</button><button class=red onclick="rep('r')">CORRER</button>${nv<12?`<button class=gold onclick="rep('u')">AUMENTAR PARA ${NX[nv]}</button>`:''}</div>`;G.rep=a=>{m.style.display='none';r(a)}})}
+const rep=a=>G.rep&&G.rep(a);
+async function raise(a){while(true){const nv=NX[G.val];if(!nv)return;G.cur=-1;render();
+await flash((a?'Vermelha: ':'Azul: ')+NM[nv]+'!',1200);
+const b=1-a,ans=b==0?await ask(nv):aiAns(nv,b);
+if(ans=='r'){G.over=true;G.win=a;await flash((b?'Vermelha':'Azul')+' correu!',1100);return}
+G.val=nv;G.lr=a;
+if(ans=='a'){await flash('Aceito! Vale '+nv,900);return}
+await flash((b?'Vermelha':'Azul')+' aumenta!',800);a=b}}
+function card(c,cls='',at=''){return `<div class="card ${c.s%2==0?'rd':''} ${cls}" ${at}><b>${R[c.r]}</b><i>${S[c.s]}</i><span>${S[c.s]}</span><b class=bt>${R[c.r]}</b></div>`}
+function render(){const n=G.n,sc=G.sc,gp={t:'1/2',l:'2/1',r:'2/3',b:'3/2'};
+let h='';G.pos.forEach((p,i)=>{const me=i==0,hd=G.h[i]||[];
+const cs=hd.map((c,k)=>me?card(c,(c.r==G.man?'man ':'')+(G.deal?'deal':''),`onclick="clk(${k})"`):`<div class="card back sm ${G.deal?'deal':''}"></div>`).join('');
+h+=`<div class="seat ${p}"><div class="nm t${i%2} ${G.cur==i?'cur':''}">${G.names[i]}${n==4&&i==2?' 🤝':''}</div><div class="hand ${me&&G.myTurn?'on':''}">${cs}</div></div>`});
+let c=`<div style="grid-area:2/2;text-align:center;font-size:11px">Vira<div>${card(G.vira,'sm')}</div>Manilha: ${R[G.man]}</div>`;
+G.pos.forEach((p,i)=>{const x=G.tbl[i];if(x)c+=`<div style="grid-area:${gp[p]}">${card(x,(G.last==i?'pl ':'')+(G.ws==i?'win':''))}</div>`});
+$('tbl').innerHTML=h+`<div class=ctr>${c}</div>`;
+$('hud').innerHTML=`<div class="tm t0">Azul<br><b>${sc[0]}</b>/12<small>faltam ${12-sc[0]}</small></div><div class=mid>Mão vale<br><b>${G.val}</b></div><div class="tm t1">Vermelha<br><b>${sc[1]}</b>/12<small>faltam ${12-sc[1]}</small></div>`;
+const nx=NX[G.val];$('tr').disabled=!(G.myTurn&&nx&&G.lr!=0);$('tr').textContent=nx?'PEDIR '+NM[nx]:'VALE 12';
+$('hist').innerHTML='<b>Últimas mãos</b> (A=Azul, V=Vermelha, E=empate, por rodada)<br>'+(G.hist.slice(0,6).map((x,i)=>`Mão ${G.hist.length-i}: ${x.w<0?'empate':(x.w?'Vermelha':'Azul')+' +'+x.p} <small>[${x.r}]</small>`).join('<br>')||'Nenhuma ainda.')}
+function fin(){const win=G.sc[0]>=12,xp=win?50+P.d*25:10;rec('tr',win,G.sc[0]+' x '+G.sc[1],xp);if(win&&P.d==2)P.hw=1;save();beep(win?660:150,.4);
+const e=$('end');e.style.display='grid';e.innerHTML=`<div class=box><div class=big>${win?'🏆 VITÓRIA!':'DERROTA'}</div><h2>${G.sc[0]} x ${G.sc[1]}</h2><p>+${xp} XP</p><button class=gold onclick="start(${G.n})">Jogar de novo</button><button onclick="show('menu');$('end').style.display='none'">Menu</button></div>`}
+P.g=P.g||{tr:[0,0],pk:[0,0],ck:[0,0]};P.hl=P.hl||[];
+AC.push(['Poker: vencer uma mesa',p=>p.g.pk[0]>0],['Cacheta: vencer uma partida',p=>p.g.ck[0]>0]);
+const GN={tr:'Truco',pk:'Poker',ck:'Cacheta'},TH=[['#12804a','#0a4a2c'],['#1f5fa8','#0f2f5a'],['#8a1f3d','#4a0f20']];
+function rec(g,win,t,xp){P.w+=win;P.l+=!win;P.g[g][win?0:1]++;P.xp+=xp;P.hl.unshift((win?'✅ ':'❌ ')+GN[g]+': '+t);P.hl.length=Math.min(P.hl.length,8);save()}
+const _h=home;home=function(){_h();$('hl').innerHTML=`<b>Por jogo (V x D):</b> Truco ${P.g.tr.join('x')} · Poker ${P.g.pk.join('x')} · Cacheta ${P.g.ck.join('x')}<br>`+P.hl.join('<br>')};
+const sl=ms=>sleep(ms*[1.6,1,.5][P.sp==null?1:P.sp]);
+function theme(){const s=document.documentElement.style,t=TH[P.th||0];s.setProperty('--f1',t[0]);s.setProperty('--f2',t[1])}
+function setup(g){theme();const o=(k,a,d)=>a.map((x,i)=>`<button class="${(P[k]==null?d:P[k])==i?'gold':''}" onclick="P.${k}=${i};save();setup('${g}')">${x}</button>`).join(' ');
+$('set').innerHTML=`<h2>${GN[g]}: configurar</h2><p>Jogadores: ${o(g+'n',['2','3','4'],g=='pk'?2:1).replace(/>(\d)</g,(m,d)=>'>'+d+'<')}</p><p>Dificuldade da IA: ${o('d',['Fácil','Médio','Difícil'],1)}</p><p>Velocidade: ${o('sp',['Lenta','Normal','Rápida'],1)}</p><p>Som: ${o('snd',['Mudo','Ligado'],1)}</p><p>Mesa: ${o('th',['Verde','Azul','Vinho'],0)}</p>${g=='ck'?`<p>Variação: ${o('cj',['Sem curingas','Com 4 curingas'],1)}</p>`:'<p>Blinds 10/20, 1000 fichas virtuais por jogador.</p>'}<button class=gold onclick="${g}Start()">COMEÇAR</button> <button onclick="show('menu')">Voltar</button>`;show('set')}
+function over(win,t,g){beep(win?660:150,.4);$('mod').style.display='none';const e=$('end');e.style.display='grid';e.innerHTML=`<div class=box><div class=big>${win?'🏆 VITÓRIA!':'FIM DE JOGO'}</div><p>${t}</p><button class=gold onclick="$('end').style.display='none';setup('${g}')">Jogar de novo</button><button onclick="$('end').style.display='none';show('menu')">Menu</button></div>`}
+/* ===== POKER ===== */
+let PK;const PKN=['Carta alta','Um par','Dois pares','Trinca','Sequência','Flush','Full House','Quadra','Straight Flush','Royal Flush'];
+const L=r=>'..23456789TJQKA'[r].replace('T','10');
+const pcard=c=>`<div class="card ${c.s%2?'':'rd'}"><b>${L(c.r)}</b><i>${S[c.s]}</i><span>${S[c.s]}</span><b class=bt>${L(c.r)}</b></div>`;
+const cmp=(a,b)=>{for(let i=0;i<7;i++){const d=(a[i]||0)-(b[i]||0);if(d)return d}return 0};
+function ev5(c){const r=c.map(x=>x.r).sort((a,b)=>b-a),f=c.every(x=>x.s==c[0].s);let st=0;if(new Set(r).size==5){if(r[0]-r[4]==4)st=r[0];else if(r[0]==14&&r[1]==5)st=5}
+const m={};r.forEach(x=>m[x]=(m[x]||0)+1);const g=Object.entries(m).map(([k,v])=>[v,+k]).sort((a,b)=>b[0]-a[0]||b[1]-a[1]),k=g.map(x=>x[1]),n=g.map(x=>x[0]).join('');
+if(st&&f)return[st==14?9:8,st];if(n=='41')return[7,...k];if(n=='32')return[6,...k];if(f)return[5,...r];if(st)return[4,st];if(n=='311')return[3,...k];if(n=='221')return[2,...k];if(n[0]=='2')return[1,...k];return[0,...r]}
+function best(c){let b=null;for(let i=0;i<c.length;i++)for(let j=i+1;j<c.length;j++){const e=ev5(c.filter((_,k)=>k!=i&&k!=j));if(!b||cmp(e,b)>0)b=e}return b}
+function pkStart(){G={dead:0};const n=(P.pkn==null?2:P.pkn)+2;PK={pl:['Você','Ana','Beto','Caio'].slice(0,n).map((x,i)=>({id:i,n:x,chips:1000,h:[],bet:0,tot:0})),dl:0,hist:[],log:[],comm:[],vis:0,pot:0,cb:0,st:0};$('end').style.display='none';show('pk');pkMatch()}
+async function pkMatch(){try{while(PK.pl[0].chips>0&&PK.pl.filter(p=>p.chips>0).length>1)await pkHand();pkFin(PK.pl[0].chips>0)}catch(e){}}
+function pkFin(w){const c=PK.pl[0].chips;rec('pk',w,c+' fichas',w?60+P.d*30:10);PK.hum=0;over(w,'Fichas finais: '+c,'pk')}
+function pkEnd(){if(G.dead)return;G.dead=true;pkFin(PK.pl[0].chips>1000)}
+const lg=t=>PK.log.unshift(t);
+function put(p,n){n=Math.min(n,p.chips);p.chips-=n;p.bet+=n;p.tot+=n;PK.pot+=n;if(!p.chips)p.allin=1;if(p.bet>PK.cb)PK.cb=p.bet}
+function apply(p,a,v){const tc=PK.cb-p.bet;if(a=='f'){p.fold=1;lg(p.n+' desiste')}else if(a=='c'){put(p,tc);lg(p.n+(tc?' paga '+tc:' passa'))}else if(a=='r'){put(p,tc+v);lg(p.n+' aumenta +'+v)}else{put(p,p.chips);lg(p.n+' vai ALL-IN')}beep(250)}
+function pks(p){if(!PK.vis){const[a,b]=p.h.map(c=>c.r).sort((x,y)=>y-x);return (a+b)/32+(a==b?.3:0)+(p.h[0].s==p.h[1].s?.04:0)}
+const e=best(p.h.concat(PK.comm.slice(0,PK.vis)));return[.2+e[1]/14*.15,.5+e[1]/14*.1,.68,.78,.84,.87,.93,.97,1,1][e[0]]}
+function ai(p){const tc=PK.cb-p.bet,s=pks(p)+(Math.random()-.5)*(.3-.1*P.d),po=tc/(PK.pot+tc||1);let a='c',v=0;
+if(tc==0){if(s>.6&&Math.random()<.35+.15*P.d)a='r',v=Math.max(20,20*Math.ceil(PK.pot*(.3+Math.random()*.5)/20))}
+else if(s<.25+po*.6&&!(P.d&&Math.random()<.05))a='f';else if(s>.82&&Math.random()<.4+.2*P.d)a='r',v=40+20*(Math.random()*3|0);
+if(a=='r'&&p.chips<=tc+v)a=s>.7?'a':'c';apply(p,a,v)}
+async function decide(p){if(p.id){await sl(800);ai(p)}else{const[a,v]=await new Promise(r=>{PK.hres=r;PK.hum=1;pkRender()});apply(p,a,v)}pkRender();await sl(300)}
+function pkA(a){if(!PK.hum)return;PK.hum=0;const v=+(($('ra')||{}).value||0);PK.hres([a,v])}
+async function round(f){const pl=PK.pl,n=pl.length;let ac=new Set(),i=f;while(1){const lv=pl.filter(p=>!p.fold);if(lv.length<2)return;const a=lv.filter(p=>!p.allin);
+if(a.every(p=>ac.has(p.id)&&p.bet==PK.cb)||(a.length<2&&a.every(p=>p.bet>=PK.cb)))return;
+const p=pl[i];i=(i+1)%n;if(p.fold||p.allin)continue;PK.cur=p.id;const o=PK.cb;await decide(p);ac.add(p.id);if(PK.cb>o)ac=new Set([p.id])}}
+async function pkHand(){const pl=PK.pl,n=pl.length;pl.forEach(p=>{p.out=p.chips<=0;p.fold=p.out;p.allin=0;p.bet=0;p.tot=0;p.h=[]});
+PK.log=[];PK.pot=0;PK.cb=0;PK.comm=[];PK.vis=0;PK.show=0;PK.st=0;PK.msg='';const dk=[];for(let r=2;r<15;r++)for(let s=0;s<4;s++)dk.push({r,s});shuf(dk);
+pl.filter(p=>!p.out).forEach(p=>p.h=[dk.pop(),dk.pop()]);for(let i=0;i<5;i++)PK.comm.push(dk.pop());
+const nx=i=>{do i=(i+1)%n;while(pl[i].out);return i};PK.dl=nx(PK.dl);const sb=nx(PK.dl),bb=nx(sb);put(pl[sb],10);put(pl[bb],20);lg('Blinds: '+pl[sb].n+' 10, '+pl[bb].n+' 20');beep(300);
+for(let st=0;st<4;st++){PK.st=st;PK.vis=[0,3,4,5][st];if(st){pl.forEach(p=>p.bet=0);PK.cb=0}PK.cur=-1;pkRender();await sl(700);
+if(pl.filter(p=>!p.fold).length>1)await round(st?nx(PK.dl):nx(bb));if(pl.filter(p=>!p.fold).length<2)break}
+const live=pl.filter(p=>!p.fold);PK.vis=5;PK.st=4;PK.cur=-1;const W=new Set();
+if(live.length==1){live[0].chips+=PK.pot;W.add(live[0].n)}else{PK.show=1;live.forEach(p=>p.sc=best(p.h.concat(PK.comm)));let prev=0;
+for(const Lv of[...new Set(live.map(p=>p.tot))].sort((a,b)=>a-b)){const amt=pl.reduce((s,p)=>s+Math.min(p.tot,Lv)-Math.min(p.tot,prev),0),el=live.filter(p=>p.tot>=Lv),top=el.reduce((b,p)=>!b||cmp(p.sc,b)>0?p.sc:b,null),ws=el.filter(p=>cmp(p.sc,top)==0);ws.forEach(p=>{p.chips+=Math.floor(amt/ws.length);W.add(p.n+' ('+PKN[p.sc[0]]+')')});prev=Lv}}
+PK.msg='Vencedor: '+[...W].join(', ')+' · pote '+PK.pot;PK.hist.unshift('Mão: '+PK.msg);PK.hist.length=Math.min(PK.hist.length,6);PK.pot=0;pkRender();await sl(3200);PK.dl=PK.dl}
+function pkRender(){const me=PK.pl[0],tc=Math.min(PK.cb-me.bet,me.chips);
+const seat=x=>{const sh=x.id==0||(PK.show&&!x.fold);return `<div class="pseat ${PK.cur==x.id?'cur':''} ${x.fold?'f':''}"><b>${x.n}</b>${x.id==PK.dl?' (D)':''}<br>🪙 ${x.chips}${x.bet?' · aposta '+x.bet:''}${x.allin?' · ALL-IN':''}${x.out?' · eliminado':''}${PK.show&&!x.fold&&x.sc?'<br>'+PKN[x.sc[0]]:''}<div class=hand2>${x.out?'':x.h.map(c=>sh?pcard(c):'<div class="card back sm"></div>').join('')}</div></div>`};
+$('pkh').innerHTML=`Pote: <b>${PK.pot}</b> · ${['Pré-Flop','Flop','Turn','River','Showdown'][PK.st]} ${PK.msg?'<br><b style="color:var(--gold)">'+PK.msg+'</b>':''}`;
+$('pkt').innerHTML=`<div class=row>${PK.pl.slice(1).map(seat).join('')}</div><div class=row>${PK.comm.map((c,i)=>i<PK.vis?pcard(c):'<div class="card back" style="opacity:.3"></div>').join('')}</div><div class=row>${seat(me)}</div>`;
+$('pka').innerHTML=PK.hum?`<button class=red onclick="pkA('f')">FOLD</button><button onclick="pkA('c')">${tc?'CALL '+tc:'CHECK'}</button>${me.chips>tc+20?`<input type=range id=ra min=20 max=${me.chips-tc} step=10 value=40 oninput="$('rv').textContent=this.value"><button class=gold onclick="pkA('r')">RAISE +<span id=rv>40</span></button>`:''}<button onclick="pkA('a')">ALL-IN</button>`:'';
+$('pkl').innerHTML='<b>Ranking:</b> '+PK.pl.slice().sort((a,b)=>b.chips-a.chips).map(p=>p.n+' '+p.chips).join(' · ')+'<br><b>Nesta mão:</b> '+PK.log.slice(0,5).join(' | ')+'<br><b>Histórico:</b><br>'+PK.hist.join('<br>')}
+/* ===== CACHETA ===== */
+let CK;const CL=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+const ccard=(c,cls='',at='')=>`<div class="card ${c.j||c.s%2?'':'rd'} ${cls}" ${at}>${c.j?'<span>🃏</span>':`<b>${CL[c.r-1]}</b><i>${S[c.s]}</i><span>${S[c.s]}</span><b class=bt>${CL[c.r-1]}</b>`}</div>`;
+function meld(g){const n=g.filter(c=>!c.j),k=g.length-n.length;if(g.length<3)return false;if(!n.length)return true;
+if(n.every(c=>c.r==n[0].r)&&new Set(n.map(c=>c.s)).size==n.length&&g.length<=4)return true;
+if(n.every(c=>c.s==n[0].s)&&new Set(n.map(c=>c.r)).size==n.length){for(const hi of[0,1]){const r=n.map(c=>hi&&c.r==1?14:c.r).sort((a,b)=>a-b);let gap=0;for(let i=1;i<r.length;i++)gap+=r[i]-r[i-1]-1;if(gap<=k)return true}}return false}
+function ok(cs){if(!cs.length)return true;const i=cs.findIndex(c=>!c.j);if(i<0)return cs.length>=3;const a=cs[i],rest=cs.filter((_,x)=>x!=i),m=rest.length;for(let b=1;b<1<<m;b++){const g=[a],rm=[];for(let x=0;x<m;x++)(b>>x&1?g:rm).push(rest[x]);if(g.length>=3&&meld(g)&&ok(rm))return true}return false}
+function mm(cs){let b=0;const n=cs.length;for(let m=1;m<1<<n;m++){let z=0,x=m;while(x){z+=x&1;x>>=1}if(z<=b||z<3)continue;if(ok(cs.filter((_,i)=>m>>i&1)))b=z}return b}
+const val=c=>c.j?15:Math.min(c.r,10);
+function pen(h){let b=1e9;for(let m=0;m<1<<h.length;m++){const g=h.filter((_,i)=>m>>i&1);if(m&&!ok(g))continue;b=Math.min(b,h.filter((_,i)=>!(m>>i&1)).reduce((s,c)=>s+val(c),0))}return b}
+function draw(t,fd){if(!fd&&!CK.st.length&&CK.dc.length>1){const tp=CK.dc.pop();CK.st=shuf(CK.dc);CK.dc=[tp]}const c=fd?CK.dc.pop():CK.st.pop();if(!c)return 0;CK.h[t].push(c);beep(260);return 1}
+function ckStart(){G={dead:0};const n=(P.ckn==null?1:P.ckn)+2;CK={n,names:['Você','Ana','Beto','Caio'].slice(0,n),sc:Array(n).fill(0),h:[],st:[],dc:[],sel:new Set(),turn:0,ph:0,msg:'',hist:[],first:0};$('end').style.display='none';show('ck');ckMatch()}
+async function ckMatch(){try{while(Math.max(...CK.sc)<40)await ckRound();const w=CK.sc[0]==Math.min(...CK.sc);rec('ck',w,CK.sc.join(' - '),w?60+P.d*30:10);over(w,'Pontos (menos é melhor): '+CK.sc.join(' · '),'ck')}catch(e){}}
+async function ckRound(){const n=CK.n,dk=[];for(let d=0;d<2;d++)for(let s=0;s<4;s++)for(let r=1;r<14;r++)dk.push({r,s,j:0});if(P.cj!==0)for(let i=0;i<4;i++)dk.push({r:0,s:0,j:1});shuf(dk);
+CK.h=[...Array(n)].map(()=>Array.from({length:9},()=>dk.pop()));CK.dc=[dk.pop()];CK.st=dk;CK.sel=new Set();CK.show=0;let t=CK.first;CK.first=(t+1)%n,w=-1;
+while(1){CK.turn=t;CK.ph=0;ckRender();const r=t==0?await ckHuman():await ckAI(t);if(r=='win'){w=t;break}if(r=='draw')break;t=(t+1)%n}
+CK.show=1;let s='Monte esgotado: rodada empatada.';if(w>=0){CK.h.forEach((h,i)=>{if(i!=w)CK.sc[i]+=pen(h)});s=CK.names[w]+' bateu! Placar: '+CK.sc.join(' · ')}CK.msg=s;CK.hist.unshift(s);ckRender();await sl(3800)}
+async function ckHuman(){CK.sel=new Set();CK.msg='Sua vez: compre do monte ou pegue o descarte.';ckRender();const f=await new Promise(r=>CK.res=r);if(!draw(0,f=='d'))return 'draw';
+CK.ph=1;CK.msg='Selecione 1 carta para descartar ou bater (use Conferir para validar jogos).';ckRender();const[a,i]=await new Promise(r=>CK.res=r);CK.dc.push(CK.h[0].splice(i,1)[0]);CK.ph=0;CK.sel=new Set();return a=='b'?'win':0}
+async function ckAI(t){await sl(900);const h=CK.h[t],top=CK.dc[CK.dc.length-1],d=P.d,bd=c=>{let b=[-1,0];c.forEach((_,i)=>{const s=mm(c.filter((_,x)=>x!=i));if(s>b[0])b=[s,i]});return b};
+let fd=d?bd(h.concat(top))[0]>mm(h):Math.random()<.3;if(d==1&&Math.random()<.25)fd=false;if(!draw(t,fd))return 'draw';
+let i=d&&!(d==1&&Math.random()<.15)?bd(h)[1]:Math.random()*h.length|0;const win=ok(h.filter((_,x)=>x!=i));CK.dc.push(h.splice(i,1)[0]);return win?'win':0}
+function ckSel(i){if(CK.turn==0){CK.sel.has(i)?CK.sel.delete(i):CK.sel.add(i);ckRender()}}
+function ck(a){if(CK.turn!=0||!CK.res)return;const h=CK.h[0];
+if(CK.ph==0){if(a=='s'||a=='d'){const r=CK.res;CK.res=0;r(a)}return}
+if(a=='o'){h.sort((x,y)=>x.s-y.s||x.r-y.r);CK.sel=new Set()}else if(a=='v'){const g=h.filter((_,i)=>CK.sel.has(i));CK.msg=g.length<3?'Selecione 3 ou mais cartas.':ok(g)?'✅ Jogo válido!':'❌ Jogo inválido.'}
+else if(CK.sel.size!=1)CK.msg='Selecione 1 carta primeiro.';else{const i=[...CK.sel][0];if(a=='b'&&!ok(h.filter((_,x)=>x!=i)))CK.msg='❌ As 9 cartas restantes ainda não formam jogos válidos.';else{const r=CK.res;CK.res=0;r([a,i]);return}}ckRender()}
+function ckRender(){const h=CK.h,top=CK.dc[CK.dc.length-1];
+$('ckh').innerHTML=CK.names.map((x,i)=>`<span class="pseat ${CK.turn==i?'cur':''}">${x}: <b>${CK.sc[i]}</b></span>`).join(' ')+' <small>(quem chegar a 40 pontos encerra; menos é melhor)</small>';
+$('ckt').innerHTML=`<div class=row>${h.slice(1).map((x,i)=>`<div class=pseat><b>${CK.names[i+1]}</b><div class=hand2>${x.map(c=>CK.show?ccard(c,'sm'):'<div class="card back sm"></div>').join('')}</div></div>`).join('')}</div><div class=row><div onclick="ck('s')" style="cursor:pointer;text-align:center"><div class="card back"></div><small>Monte (${CK.st.length})</small></div><div onclick="ck('d')" style="cursor:pointer;text-align:center">${top?ccard(top):''}<small>Descarte</small></div></div><div class=pseat><b>Você</b><div class=hand2 style="flex-wrap:wrap">${h[0].map((c,i)=>ccard(c,CK.sel.has(i)?'sel':'',`onclick="ckSel(${i})"`)).join('')}</div></div>`;
+$('cka').innerHTML=`<div style="flex-basis:100%;text-align:center">${CK.msg}</div>`+(CK.ph==1&&CK.turn==0?`<button onclick="ck('o')">Ordenar</button><button onclick="ck('v')">Conferir seleção</button><button onclick="ck('x')">Descartar</button><button class=gold onclick="ck('b')">BATER</button>`:'')+`<button class=red onclick="quit()">Sair</button>`;
+$('ckl').innerHTML='<b>Histórico:</b><br>'+CK.hist.join('<br>')}
+theme();
+home();
+</script></body></html>
