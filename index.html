@@ -49,7 +49,7 @@ h2{font-family:Georgia,serif;color:var(--gold)}.rules p{line-height:1.55}
 <div id=rules class="scr rules"><h2>Regras (Truco Paulista)</h2>
 <p>Baralho de 40 cartas (sem 8, 9, 10 e curingas). Cada jogador recebe 3 cartas. A carta <b>vira</b> define a <b>manilha</b>: a carta seguinte na ordem 4-5-6-7-Q-J-K-A-2-3. Entre as manilhas: Paus (zap) &gt; Copas &gt; Espadas &gt; Ouros.</p>
 <p>Demais cartas, da mais forte à mais fraca: 3, 2, A, K, J, Q, 7, 6, 5, 4. Cada mão tem até 3 rodadas; vence quem ganhar 2. Se a primeira empatar, a segunda decide; se a segunda empatar, vale a primeira; se tudo empatar, ninguém pontua.</p>
-<p>A mão vale 1 ponto. TRUCO sobe para 3; o adversário pode aceitar, correr (quem pediu ganha o valor anterior) ou aumentar para 6, depois 9 e 12. Quem pediu o último aumento não pode pedir de novo. Vence a partida quem chegar a 12 pontos. No 2x2 você joga com o Parceiro (azul) contra os Oponentes (vermelhos).</p>
+<p>A mão vale 1 ponto. TRUCO sobe para 3; o adversário pode aceitar, correr (quem pediu ganha o valor anterior) ou aumentar para 6, depois 9 e 12. Quem pediu o último aumento não pode pedir de novo. Vence a partida quem chegar a 12 pontos. Se a vira for o 2, a manilha é o 3; se for o 3, a manilha é o 4. Mão de onze: a dupla com 11 pontos vê as cartas e escolhe jogar (a mão vale 3, sem truco) ou correr (o adversário ganha 1). Mão de ferro: se as duas duplas têm 11, joga-se no escuro, sem ver as próprias cartas, valendo a partida. No 2x2 você joga com o Parceiro (azul) contra os Oponentes (vermelhos).</p>
 <button onclick="show('menu')">Voltar</button></div>
 <div id=cfg class=scr></div>
 <div id=game class=scr><div id=hud></div><div id=tbl></div><div class=bar><button id=tr class=gold onclick="clickTr()">TRUCO</button><button class=red onclick="quit()">Sair</button></div><div id=hist></div></div>
@@ -75,10 +75,14 @@ function quit(){G.dead=true;$('mod').style.display='none';$('fx').style.display=
 async function match(){const g=G;try{while(g.sc[0]<12&&g.sc[1]<12){await hand();g.first=(g.first+1)%g.n}fin()}catch(e){if(!g.dead)console.error(e)}}
 function ev(r){const a=r.filter(x=>x==0).length,b=r.filter(x=>x==1).length;if(a>1)return 0;if(b>1)return 1;if(r.length>=2&&(r[0]<0||r[1]<0)){if(r[0]>=0&&r[1]<0)return r[0];if(r[0]<0&&r[1]>=0)return r[1]}if(r.length==3)return r[0]>=0?r[0]:r[2]>=0?r[2]:-1;return null}
 async function flash(t,ms){const f=$('fx');f.textContent=t;f.style.display='grid';f.classList.remove('z');void f.offsetWidth;f.classList.add('z');beep(500,.15);await sleep(ms);f.style.display='none'}
+function ask11(){return new Promise(r=>{const m=$('mod');m.style.display='grid';m.innerHTML=`<div class=box><h2>Mão de onze!</h2><div class=row>${G.h[0].map(c=>card(c,c.r==G.man?'man':'')).join('')}</div>${G.n==4?`<p>Cartas do parceiro:</p><div class=row>${G.h[2].map(c=>card(c,'sm')).join('')}</div>`:''}<p>Jogar faz a mão valer 3 pontos (sem aumentos). Correr dá 1 ponto ao adversário.</p><button class=gold onclick="rep('a')">JOGAR (vale 3)</button><button class=red onclick="rep('r')">CORRER</button></div>`;G.rep=a=>{m.style.display='none';r(a=='a')}})}
 async function hand(){const n=G.n,dk=[];for(let r=0;r<10;r++)for(let s=0;s<4;s++)dk.push({r,s});shuf(dk);
 G.vira=dk.pop();G.man=(G.vira.r+1)%10;G.h=[...Array(n)].map(()=>[dk.pop(),dk.pop(),dk.pop()]);
-G.val=1;G.lr=-1;G.rw=[];G.tbl=Array(n).fill(null);G.over=false;G.win=null;G.ws=-1;G.last=-1;G.deal=true;beep(300);render();G.deal=false;await sleep(900);
+G.val=1;G.lr=-1;G.rw=[];G.blind=G.sc[0]==11&&G.sc[1]==11;G.nr=G.blind;G.tbl=Array(n).fill(null);G.over=false;G.win=null;G.ws=-1;G.last=-1;G.deal=true;beep(300);render();G.deal=false;await sleep(900);
 let lead=G.first,res=null;
+if(G.blind)await flash('Mão de ferro! Jogue no escuro',1600);
+else{const t=G.sc[0]==11?0:G.sc[1]==11?1:-1;if(t>=0){G.nr=true;const go=t==0?await ask11():ts(1)+(Math.random()-.5)*(.34-.12*P.d)>.5;
+if(go){G.val=3;await flash('Mão de onze: vale 3!',1200)}else{G.over=true;G.win=1-t;await flash((t?'Vermelha':'Azul')+' correu da mão de onze!',1300)}}}
 for(let rd=0;rd<3&&res===null&&!G.over;rd++){
 G.tbl=Array(n).fill(null);G.ws=-1;
 for(let k=0;k<n&&!G.over;k++)await turn((lead+k)%n);
@@ -93,12 +97,12 @@ if(w==0&&p==12){P.t12=1;save()}
 G.cur=-1;render();await flash(w<0?'Mão empatada':(w?'Vermelha':'Azul')+' +'+p,1300)}
 function humanTurn(){return new Promise(r=>{G.hres=r;G.myTurn=true;G.cur=0;render()})}
 function clk(i){if(!G.myTurn)return;const c=G.h[0][i];if(!c)return;G.myTurn=false;G.hres({card:c})}
-function clickTr(){if(G.myTurn&&G.val<12&&G.lr!=0){G.myTurn=false;G.hres({truco:1})}}
+function clickTr(){if(G.myTurn&&G.val<12&&!G.nr&&G.lr!=0){G.myTurn=false;G.hres({truco:1})}}
 function play(s,c){G.h[s]=G.h[s].filter(x=>x!==c);G.tbl[s]=c;G.last=s;G.ws=-1;beep(220+s*40);render()}
 async function turn(s){G.cur=s;render();
 if(s==0){while(1){const a=await humanTurn();if(a.truco){await raise(0);if(G.over)return;continue}play(0,a.card);return}}
 await sleep(750);const t=s%2;
-if(G.val<12&&G.lr!=t&&aiRaise(s)){await raise(t);if(G.over)return}
+if(G.val<12&&!G.nr&&G.lr!=t&&aiRaise(s)){await raise(t);if(G.over)return}
 play(s,aiCard(s))}
 function hs(s){const v=G.h[s].map(pv).sort((a,b)=>b-a).slice(0,2);let x=v.reduce((a,b)=>a+b,0)/(v.length||1);const r=G.rw;if(r.length&&r[0]==s%2)x+=.15;if(r.length&&r[0]>=0&&r[0]!=s%2)x-=.1;return x}
 const ts=t=>Math.max(...[...Array(G.n)].map((_,i)=>i).filter(i=>i%2==t).map(hs));
@@ -112,7 +116,7 @@ if(b.i%2==s%2&&P.d)return h[0];
 return h.find(c=>pw(c)>b.p)||h[0]}
 function ask(nv){return new Promise(r=>{const m=$('mod');m.style.display='grid';m.innerHTML=`<div class=box><h2>${NM[nv]}! A mão vai valer ${nv}</h2><button onclick="rep('a')">ACEITAR</button><button class=red onclick="rep('r')">CORRER</button>${nv<12?`<button class=gold onclick="rep('u')">AUMENTAR PARA ${NX[nv]}</button>`:''}</div>`;G.rep=a=>{m.style.display='none';r(a)}})}
 const rep=a=>G.rep&&G.rep(a);
-async function raise(a){while(true){const nv=NX[G.val];if(!nv)return;G.cur=-1;render();
+async function raise(a){while(true){const nv=NX[G.val];if(!nv||G.nr)return;G.cur=-1;render();
 await flash((a?'Vermelha: ':'Azul: ')+NM[nv]+'!',1200);
 const b=1-a,ans=b==0?await ask(nv):aiAns(nv,b);
 if(ans=='r'){G.over=true;G.win=a;await flash((b?'Vermelha':'Azul')+' correu!',1100);return}
@@ -122,13 +126,13 @@ await flash((b?'Vermelha':'Azul')+' aumenta!',800);a=b}}
 function card(c,cls='',at=''){return `<div class="card ${c.s%2==0?'rd':''} ${cls}" ${at}><b>${R[c.r]}</b><i>${S[c.s]}</i><span>${S[c.s]}</span><b class=bt>${R[c.r]}</b></div>`}
 function render(){const n=G.n,sc=G.sc,gp={t:'1/2',l:'2/1',r:'2/3',b:'3/2'};
 let h='';G.pos.forEach((p,i)=>{const me=i==0,hd=G.h[i]||[];
-const cs=hd.map((c,k)=>me?card(c,(c.r==G.man?'man ':'')+(G.deal?'deal':''),`onclick="clk(${k})"`):`<div class="card back sm ${G.deal?'deal':''}"></div>`).join('');
+const cs=hd.map((c,k)=>me&&G.blind?`<div class="card back" onclick="clk(${k})"></div>`:me?card(c,(c.r==G.man?'man ':'')+(G.deal?'deal':''),`onclick="clk(${k})"`):`<div class="card back sm ${G.deal?'deal':''}"></div>`).join('');
 h+=`<div class="seat ${p}"><div class="nm t${i%2} ${G.cur==i?'cur':''}">${G.names[i]}${n==4&&i==2?' 🤝':''}</div><div class="hand ${me&&G.myTurn?'on':''}">${cs}</div></div>`});
 let c=`<div style="grid-area:2/2;text-align:center;font-size:11px">Vira<div>${card(G.vira,'sm')}</div>Manilha: ${R[G.man]}</div>`;
 G.pos.forEach((p,i)=>{const x=G.tbl[i];if(x)c+=`<div style="grid-area:${gp[p]}">${card(x,(G.last==i?'pl ':'')+(G.ws==i?'win':''))}</div>`});
 $('tbl').innerHTML=h+`<div class=ctr>${c}</div>`;
 $('hud').innerHTML=`<div class="tm t0">Azul<br><b>${sc[0]}</b>/12<small>faltam ${12-sc[0]}</small></div><div class=mid>Mão vale<br><b>${G.val}</b></div><div class="tm t1">Vermelha<br><b>${sc[1]}</b>/12<small>faltam ${12-sc[1]}</small></div>`;
-const nx=NX[G.val];$('tr').disabled=!(G.myTurn&&nx&&G.lr!=0);$('tr').textContent=nx?'PEDIR '+NM[nx]:'VALE 12';
+const nx=NX[G.val];$('tr').disabled=!(G.myTurn&&nx&&!G.nr&&G.lr!=0);$('tr').textContent=G.nr?'SEM TRUCO':nx?'PEDIR '+NM[nx]:'VALE 12';
 $('hist').innerHTML='<b>Últimas mãos</b> (A=Azul, V=Vermelha, E=empate, por rodada)<br>'+(G.hist.slice(0,6).map((x,i)=>`Mão ${G.hist.length-i}: ${x.w<0?'empate':(x.w?'Vermelha':'Azul')+' +'+x.p} <small>[${x.r}]</small>`).join('<br>')||'Nenhuma ainda.')}
 function fin(){const win=G.sc[0]>=12,xp=win?50+P.d*25:10;rec('tr',win,G.sc[0]+' x '+G.sc[1],xp);if(win&&P.d==2)P.hw=1;save();beep(win?660:150,.4);
 const e=$('end');e.style.display='grid';e.innerHTML=`<div class=box><div class=big>${win?'🏆 VITÓRIA!':'DERROTA'}</div><h2>${G.sc[0]} x ${G.sc[1]}</h2><p>+${xp} XP</p><button class=gold onclick="start(${G.n})">Jogar de novo</button><button onclick="show('menu');$('end').style.display='none'">Menu</button></div>`}
@@ -199,7 +203,7 @@ function draw(t,fd){if(!fd&&!CK.st.length&&CK.dc.length>1){const tp=CK.dc.pop();
 function ckStart(){G={dead:0};const n=(P.ckn==null?1:P.ckn)+2;CK={n,names:['Você','Ana','Beto','Caio'].slice(0,n),sc:Array(n).fill(0),h:[],st:[],dc:[],sel:new Set(),turn:0,ph:0,msg:'',hist:[],first:0};$('end').style.display='none';show('ck');ckMatch()}
 async function ckMatch(){try{while(Math.max(...CK.sc)<40)await ckRound();const w=CK.sc[0]==Math.min(...CK.sc);rec('ck',w,CK.sc.join(' - '),w?60+P.d*30:10);over(w,'Pontos (menos é melhor): '+CK.sc.join(' · '),'ck')}catch(e){}}
 async function ckRound(){const n=CK.n,dk=[];for(let d=0;d<2;d++)for(let s=0;s<4;s++)for(let r=1;r<14;r++)dk.push({r,s,j:0});if(P.cj!==0)for(let i=0;i<4;i++)dk.push({r:0,s:0,j:1});shuf(dk);
-CK.h=[...Array(n)].map(()=>Array.from({length:9},()=>dk.pop()));CK.dc=[dk.pop()];CK.st=dk;CK.sel=new Set();CK.show=0;let t=CK.first;CK.first=(t+1)%n,w=-1;
+CK.h=[...Array(n)].map(()=>Array.from({length:9},()=>dk.pop()));CK.dc=[dk.pop()];CK.st=dk;CK.sel=new Set();CK.show=0;let t=CK.first;CK.first=(t+1)%n;let w=-1;
 while(1){CK.turn=t;CK.ph=0;ckRender();const r=t==0?await ckHuman():await ckAI(t);if(r=='win'){w=t;break}if(r=='draw')break;t=(t+1)%n}
 CK.show=1;let s='Monte esgotado: rodada empatada.';if(w>=0){CK.h.forEach((h,i)=>{if(i!=w)CK.sc[i]+=pen(h)});s=CK.names[w]+' bateu! Placar: '+CK.sc.join(' · ')}CK.msg=s;CK.hist.unshift(s);ckRender();await sl(3800)}
 async function ckHuman(){CK.sel=new Set();CK.msg='Sua vez: compre do monte ou pegue o descarte.';ckRender();const f=await new Promise(r=>CK.res=r);if(!draw(0,f=='d'))return 'draw';
