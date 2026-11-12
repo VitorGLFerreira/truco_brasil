@@ -45,7 +45,7 @@ h2{font-family:Georgia,serif;color:var(--gold)}.rules p{line-height:1.55}
 @media(prefers-reduced-motion:reduce){*{animation:none!important}}
 </style></head><body>
 <div id=menu class="scr on"><div class=logo>♠ TRUCO ♥<br>BRASIL</div><div id=prof class=prof></div>
-<div class=gm><div class=gc><div class=ic>♠ ♥ ♣</div><h2>Truco</h2><p>Chame o truco, blefe e vença seus adversários!</p><button class=gold onclick="start(2)">JOGAR TRUCO</button><button onclick="start(4)">Truco 2x2 com parceiro</button></div><div class=gc><div class=ic>🪙 A♠ K♠</div><h2>Poker</h2><p>Use sua estratégia e forme a melhor mão!</p><button class=gold onclick="setup('pk')">JOGAR POKER</button></div><div class=gc><div class=ic>4♥ 5♥ 6♥</div><h2>Cacheta</h2><p>Monte suas combinações e seja o primeiro a bater!</p><button class=gold onclick="setup('ck')">JOGAR CACHETA</button></div></div><div class=bar><button onclick="show('rules')">REGRAS DO TRUCO</button><button onclick="show('cfg')">CONFIGURAÇÕES</button></div><div id=hl style="text-align:center;font-size:13px;margin-top:10px"></div><div id=ach class=ach></div></div>
+<div class=gm><div class=gc><div class=ic>♠ ♥ ♣</div><h2>Truco</h2><p>Chame o truco, blefe e vença seus adversários!</p><button class=gold onclick="start(2)">JOGAR TRUCO</button><button onclick="start(4)">Truco 2x2 com parceiro</button><button onclick="rmUi()">Criar partida com amigos</button></div><div class=gc><div class=ic>🪙 A♠ K♠</div><h2>Poker</h2><p>Use sua estratégia e forme a melhor mão!</p><button class=gold onclick="setup('pk')">JOGAR POKER</button></div><div class=gc><div class=ic>4♥ 5♥ 6♥</div><h2>Cacheta</h2><p>Monte suas combinações e seja o primeiro a bater!</p><button class=gold onclick="setup('ck')">JOGAR CACHETA</button></div></div><div class=bar><button onclick="show('rules')">REGRAS DO TRUCO</button><button onclick="show('cfg')">CONFIGURAÇÕES</button></div><div id=hl style="text-align:center;font-size:13px;margin-top:10px"></div><div id=ach class=ach></div></div>
 <div id=rules class="scr rules"><h2>Regras (Truco Paulista)</h2>
 <p>Baralho de 40 cartas (sem 8, 9, 10 e curingas). Cada jogador recebe 3 cartas. A carta <b>vira</b> define a <b>manilha</b>: a carta seguinte na ordem 4-5-6-7-Q-J-K-A-2-3. Entre as manilhas: Paus (zap) &gt; Copas &gt; Espadas &gt; Ouros.</p>
 <p>Demais cartas, da mais forte à mais fraca: 3, 2, A, K, J, Q, 7, 6, 5, 4. Cada mão tem até 3 rodadas; vence quem ganhar 2. Se a primeira empatar, a segunda decide; se a segunda empatar, vale a primeira; se tudo empatar, ninguém pontua.</p>
@@ -53,7 +53,7 @@ h2{font-family:Georgia,serif;color:var(--gold)}.rules p{line-height:1.55}
 <button onclick="show('menu')">Voltar</button></div>
 <div id=cfg class=scr></div>
 <div id=game class=scr><div id=hud></div><div id=tbl></div><div class=bar><button id=tr class=gold onclick="clickTr()">TRUCO</button><button class=red onclick="quit()">Sair</button></div><div id=hist></div></div>
-<div id=set class=scr></div><div id=pk class=scr><div id=pkh style="text-align:center;margin-bottom:8px"></div><div id=pkt class=tb></div><div class=bar id=pka></div><div class=bar><button onclick="pkEnd()">Encerrar mesa</button><button class=red onclick="quit()">Sair</button></div><div id=pkl style="font-size:13px;background:#0006;border-radius:12px;padding:10px;line-height:1.6"></div></div><div id=ck class=scr><div id=ckh style="text-align:center;margin-bottom:8px"></div><div id=ckt class=tb></div><div class=bar id=cka style="flex-wrap:wrap"></div><div id=ckl style="font-size:13px;background:#0006;border-radius:12px;padding:10px;line-height:1.6"></div></div><div id=fx></div><div id=mod></div><div id=end></div>
+<div id=set class=scr></div><div id=rm class=scr></div><div id=pk class=scr><div id=pkh style="text-align:center;margin-bottom:8px"></div><div id=pkt class=tb></div><div class=bar id=pka></div><div class=bar><button onclick="pkEnd()">Encerrar mesa</button><button class=red onclick="quit()">Sair</button></div><div id=pkl style="font-size:13px;background:#0006;border-radius:12px;padding:10px;line-height:1.6"></div></div><div id=ck class=scr><div id=ckh style="text-align:center;margin-bottom:8px"></div><div id=ckt class=tb></div><div class=bar id=cka style="flex-wrap:wrap"></div><div id=ckl style="font-size:13px;background:#0006;border-radius:12px;padding:10px;line-height:1.6"></div></div><div id=fx></div><div id=mod></div><div id=end></div>
 <script>
 const S=['♦','♠','♥','♣'],R=['4','5','6','7','Q','J','K','A','2','3'],NX={1:3,3:6,6:9,9:12},NM={3:'TRUCO',6:'SEIS',9:'NOVE',12:'DOZE'},AV=['😎','🤠','🧑‍🌾','👑','🦊'];
 const $=i=>document.getElementById(i);
@@ -74,14 +74,14 @@ function start(n){G={n,sc:[0,0],hist:[],first:0,cur:-1,names:n==4?[P.name,'Opone
 function quit(){G.dead=true;$('mod').style.display='none';$('fx').style.display='none';show('menu')}
 async function match(){const g=G;try{while(g.sc[0]<12&&g.sc[1]<12){await hand();g.first=(g.first+1)%g.n}fin()}catch(e){if(!g.dead)console.error(e)}}
 function ev(r){const a=r.filter(x=>x==0).length,b=r.filter(x=>x==1).length;if(a>1)return 0;if(b>1)return 1;if(r.length>=2&&(r[0]<0||r[1]<0)){if(r[0]>=0&&r[1]<0)return r[0];if(r[0]<0&&r[1]>=0)return r[1]}if(r.length==3)return r[0]>=0?r[0]:r[2]>=0?r[2]:-1;return null}
-async function flash(t,ms){const f=$('fx');f.textContent=t;f.style.display='grid';f.classList.remove('z');void f.offsetWidth;f.classList.add('z');beep(500,.15);await sleep(ms);f.style.display='none'}
-function ask11(){return new Promise(r=>{const m=$('mod');m.style.display='grid';m.innerHTML=`<div class=box><h2>Mão de onze!</h2><div class=row>${G.h[0].map(c=>card(c,c.r==G.man?'man':'')).join('')}</div>${G.n==4?`<p>Cartas do parceiro:</p><div class=row>${G.h[2].map(c=>card(c,'sm')).join('')}</div>`:''}<p>Jogar faz a mão valer 3 pontos (sem aumentos). Correr dá 1 ponto ao adversário.</p><button class=gold onclick="rep('a')">JOGAR (vale 3)</button><button class=red onclick="rep('r')">CORRER</button></div>`;G.rep=a=>{m.style.display='none';r(a=='a')}})}
+async function flash(t,ms){if(RM.host)RM.room.emit('fx',{t,ms});const f=$('fx');f.textContent=t;f.style.display='grid';f.classList.remove('z');void f.offsetWidth;f.classList.add('z');beep(500,.15);await sleep(ms);f.style.display='none'}
+function ask11(){return new Promise(r=>{const m=$('mod');m.style.display='grid';m.innerHTML=`<div class=box><h2>Mão de onze!</h2><div class=row style="align-items:center">Vira: ${card(G.vira,'sm')} Manilha: <b>${R[G.man]}</b></div><div class=row>${G.h[0].map(c=>card(c,c.r==G.man?'man':'')).join('')}</div>${G.n==4?`<p>Cartas do parceiro:</p><div class=row>${G.h[2].map(c=>card(c,'sm')).join('')}</div>`:''}<p>Jogar faz a mão valer 3 pontos (sem aumentos). Correr dá 1 ponto ao adversário.</p><button class=gold onclick="rep('a')">JOGAR (vale 3)</button><button class=red onclick="rep('r')">CORRER</button></div>`;G.rep=a=>{m.style.display='none';r(a=='a')}})}
 async function hand(){const n=G.n,dk=[];for(let r=0;r<10;r++)for(let s=0;s<4;s++)dk.push({r,s});shuf(dk);
 G.vira=dk.pop();G.man=(G.vira.r+1)%10;if(G.man==9)G.man=0;G.h=[...Array(n)].map(()=>[dk.pop(),dk.pop(),dk.pop()]);
 G.val=1;G.lr=-1;G.rw=[];G.blind=G.sc[0]==11&&G.sc[1]==11;G.nr=G.blind;G.tbl=Array(n).fill(null);G.over=false;G.win=null;G.ws=-1;G.last=-1;G.deal=true;beep(300);render();G.deal=false;await sleep(900);
 let lead=G.first,res=null;
 if(G.blind)await flash('Mão de ferro! Jogue no escuro',1600);
-else{const t=G.sc[0]==11?0:G.sc[1]==11?1:-1;if(t>=0){G.nr=true;const go=t==0?await ask11():ts(1)+(Math.random()-.5)*(.34-.12*P.d)>.5;
+else{const t=G.sc[0]==11?0:G.sc[1]==11?1:-1;if(t>=0){G.nr=true;const go=await go11(t);
 if(go){G.val=3;await flash('Mão de onze: vale 3!',1200)}else{G.over=true;G.win=1-t;await flash((t?'Vermelha':'Azul')+' correu da mão de onze!',1300)}}}
 for(let rd=0;rd<3&&res===null&&!G.over;rd++){
 G.tbl=Array(n).fill(null);G.ws=-1;
@@ -96,11 +96,11 @@ G.hist.unshift({w,p,r:G.rw.map(x=>x<0?'E':x?'V':'A').join(' ')+(G.over?' (correu
 if(w==0&&p==12){P.t12=1;save()}
 G.cur=-1;render();await flash(w<0?'Mão empatada':(w?'Vermelha':'Azul')+' +'+p,1300)}
 function humanTurn(){return new Promise(r=>{G.hres=r;G.myTurn=true;G.cur=0;render()})}
-function clk(i){if(!G.myTurn)return;const c=G.h[0][i];if(!c)return;G.myTurn=false;G.hres({card:c})}
-function clickTr(){if(G.myTurn&&G.val<12&&!G.nr&&G.lr!=0){G.myTurn=false;G.hres({truco:1})}}
+function clk(i){if(RM.g)return gact({t:'p',i});if(!G.myTurn)return;const c=G.h[0][i];if(!c)return;G.myTurn=false;G.hres({card:c})}
+function clickTr(){if(RM.g)return gact({t:'t'});if(G.myTurn&&G.val<12&&!G.nr&&G.lr!=0){G.myTurn=false;G.hres({truco:1})}}
 function play(s,c){G.h[s]=G.h[s].filter(x=>x!==c);G.tbl[s]=c;G.last=s;G.ws=-1;beep(220+s*40);render()}
 async function turn(s){G.cur=s;render();
-if(s==0){while(1){const a=await humanTurn();if(a.truco){await raise(0);if(G.over)return;continue}play(0,a.card);return}}
+if(s==0||RM.rs.includes(s)){while(1){const a=await(s?remTurn(s):humanTurn());if(a.truco){await raise(s%2);if(G.over)return;continue}play(s,a.card);return}}
 await sleep(750);const t=s%2;
 if(G.val<12&&!G.nr&&G.lr!=t&&aiRaise(s)){await raise(t);if(G.over)return}
 play(s,aiCard(s))}
@@ -118,7 +118,7 @@ function ask(nv){return new Promise(r=>{const m=$('mod');m.style.display='grid';
 const rep=a=>G.rep&&G.rep(a);
 async function raise(a){while(true){const nv=NX[G.val];if(!nv||G.nr)return;G.cur=-1;render();
 await flash((a?'Vermelha: ':'Azul: ')+NM[nv]+'!',1200);
-const b=1-a,ans=b==0?await ask(nv):aiAns(nv,b);
+const b=1-a,ans=await resp(b,nv);
 if(ans=='r'){G.over=true;G.win=a;await flash((b?'Vermelha':'Azul')+' correu!',1100);return}
 G.val=nv;G.lr=a;
 if(ans=='a'){await flash('Aceito! Vale '+nv,900);return}
@@ -134,7 +134,7 @@ $('tbl').innerHTML=h+`<div class=ctr>${c}</div>`;
 $('hud').innerHTML=`<div class="tm t0">Azul<br><b>${sc[0]}</b>/12<small>faltam ${12-sc[0]}</small></div><div class=mid>Mão vale<br><b>${G.val}</b></div><div class="tm t1">Vermelha<br><b>${sc[1]}</b>/12<small>faltam ${12-sc[1]}</small></div>`;
 const nx=NX[G.val];$('tr').disabled=!(G.myTurn&&nx&&!G.nr&&G.lr!=0);$('tr').textContent=G.nr?'SEM TRUCO':nx?'PEDIR '+NM[nx]:'VALE 12';
 $('hist').innerHTML='<b>Últimas mãos</b> (A=Azul, V=Vermelha, E=empate, por rodada)<br>'+(G.hist.slice(0,6).map((x,i)=>`Mão ${G.hist.length-i}: ${x.w<0?'empate':(x.w?'Vermelha':'Azul')+' +'+x.p} <small>[${x.r}]</small>`).join('<br>')||'Nenhuma ainda.')}
-function fin(){const win=G.sc[0]>=12,xp=win?50+P.d*25:10;rec('tr',win,G.sc[0]+' x '+G.sc[1],xp);if(win&&P.d==2)P.hw=1;save();beep(win?660:150,.4);
+function fin(){if(RM.host){RM.room.emit('end',{w:G.sc[0]>=12?0:1,sc:G.sc});RM.host=0;RM.rs=[]}const win=G.sc[0]>=12,xp=win?50+P.d*25:10;rec('tr',win,G.sc[0]+' x '+G.sc[1],xp);if(win&&P.d==2)P.hw=1;save();beep(win?660:150,.4);
 const e=$('end');e.style.display='grid';e.innerHTML=`<div class=box><div class=big>${win?'🏆 VITÓRIA!':'DERROTA'}</div><h2>${G.sc[0]} x ${G.sc[1]}</h2><p>+${xp} XP</p><button class=gold onclick="start(${G.n})">Jogar de novo</button><button onclick="show('menu');$('end').style.display='none'">Menu</button></div>`}
 P.g=P.g||{tr:[0,0],pk:[0,0],ck:[0,0]};P.hl=P.hl||[];
 AC.push(['Poker: vencer uma mesa',p=>p.g.pk[0]>0],['Cacheta: vencer uma partida',p=>p.g.ck[0]>0]);
@@ -221,6 +221,37 @@ $('ckh').innerHTML=CK.names.map((x,i)=>`<span class="pseat ${CK.turn==i?'cur':''
 $('ckt').innerHTML=`<div class=row>${h.slice(1).map((x,i)=>`<div class=pseat><b>${CK.names[i+1]}</b><div class=hand2>${x.map(c=>CK.show?ccard(c,'sm'):'<div class="card back sm"></div>').join('')}</div></div>`).join('')}</div><div class=row><div onclick="ck('s')" style="cursor:pointer;text-align:center"><div class="card back"></div><small>Monte (${CK.st.length})</small></div><div onclick="ck('d')" style="cursor:pointer;text-align:center">${top?ccard(top):''}<small>Descarte</small></div></div><div class=pseat><b>Você</b><div class=hand2 style="flex-wrap:wrap">${h[0].map((c,i)=>ccard(c,CK.sel.has(i)?'sel':'',`onclick="ckSel(${i})"`)).join('')}</div></div>`;
 $('cka').innerHTML=`<div style="flex-basis:100%;text-align:center">${CK.msg}</div>`+(CK.ph==1&&CK.turn==0?`<button onclick="ck('o')">Ordenar</button><button onclick="ck('v')">Conferir seleção</button><button onclick="ck('x')">Descartar</button><button class=gold onclick="ck('b')">BATER</button>`:'')+`<button class=red onclick="quit()">Sair</button>`;
 $('ckl').innerHTML='<b>Histórico:</b><br>'+CK.hist.join('<br>')}
+/* ===== SALAS (Truco) ===== */
+let RM={rs:[],wait:{},answ:{},seats:{},nm:{},n:2};
+const _rd=render;render=function(){_rd();bcState()};
+const _q=quit;quit=function(){try{RM.room&&RM.room.leave()}catch(e){}RM.host=0;RM.g=0;RM.room=null;RM.rs=[];RM.nm={};RM.seats={};RM.started=0;try{_q()}catch(e){show('menu')}};
+function view(k){const n=G.n,f=k%2,t=x=>x<0?x:f?1-x:x,m=j=>(j+k)%n,sw=s=>f?s.replace(/[AV]/g,c=>c=='A'?'V':'A'):s;
+return{n,dead:0,pos:G.pos,sc:f?[G.sc[1],G.sc[0]]:G.sc,hist:G.hist.slice(0,30).map(x=>({w:t(x.w),p:x.p,r:sw(x.r)})),cur:G.cur<0?-1:(G.cur-k+n)%n,names:G.names.map((_,j)=>j?RM.full[m(j)]:'Você'),
+h:G.h.map((_,j)=>j?Array(G.h[m(j)].length).fill({r:0,s:0}):G.h[k]),tbl:G.tbl.map((_,j)=>G.tbl[m(j)]),vira:G.vira,man:G.man,val:G.val,lr:t(G.lr),nr:G.nr,blind:G.blind,
+last:G.last<0?-1:(G.last-k+n)%n,ws:G.ws<0?-1:(G.ws-k+n)%n,myTurn:!!RM.wait[k]&&G.cur==k,ask:RM.ask&&RM.ask.s==k?RM.ask.nv:0}}
+function bcState(now){if(!RM.host||!RM.started)return;clearTimeout(RM.t);const f=()=>RM.rs.forEach(k=>RM.room.emit('st',{k,v:view(k)}));now?f():RM.t=setTimeout(f,60)}
+function remTurn(s){return new Promise(r=>{RM.wait[s]=r;bcState(1);setTimeout(()=>{if(RM.wait[s]===r){RM.wait[s]=0;r({card:aiCard(s)})}},90000)})}
+function askRemote(s,nv){return new Promise(r=>{RM.answ[s]=r;RM.ask={s,nv};bcState(1);setTimeout(()=>{if(RM.answ[s]===r){RM.answ[s]=0;RM.ask=null;r('r')}},60000)})}
+async function resp(b,nv){if(b==0)return ask(nv);const s=RM.rs.find(x=>x%2==b);return s==null?aiAns(nv,b):askRemote(s,nv)}
+async function go11(t){if(t==0)return ask11();const s=RM.rs.find(x=>x%2==1);return s==null?ts(1)+(Math.random()-.5)*(.34-.12*P.d)>.5:(await askRemote(s,11))=='a'}
+function gact(m){if(G.myTurn){G.myTurn=false;RM.room.emit('act',m)}}
+function gans(a){$('mod').style.display='none';RM.am=0;RM.room.emit('ans',{a})}
+function gmod(){const m=$('mod');if(G.ask){if(RM.am!=G.ask){RM.am=G.ask;m.style.display='grid';m.innerHTML=G.ask==11?`<div class=box><h2>Mão de onze!</h2><p>Jogar vale 3 pontos (sem aumentos). Correr dá 1 ponto ao adversário.</p><button class=gold onclick="gans('a')">JOGAR</button><button class=red onclick="gans('r')">CORRER</button></div>`:`<div class=box><h2>${NM[G.ask]}! Vale ${G.ask}</h2><button onclick="gans('a')">ACEITAR</button><button class=red onclick="gans('r')">CORRER</button>${G.ask<12?`<button class=gold onclick="gans('u')">AUMENTAR PARA ${NX[G.ask]}</button>`:''}</div>`}}else if(RM.am){RM.am=0;m.style.display='none'}}
+function gEnd(d){const my=RM.seat%2,win=d.w==my,sc=my?[d.sc[1],d.sc[0]]:d.sc;rec('tr',win,sc[0]+' x '+sc[1]+' (sala)',win?50:10);try{RM.room.leave()}catch(e){}RM.g=0;RM.room=null;$('mod').style.display='none';beep(win?660:150,.4);const e=$('end');e.style.display='grid';e.innerHTML=`<div class=box><div class=big>${win?'🏆 VITÓRIA!':'DERROTA'}</div><h2>${sc[0]} x ${sc[1]}</h2><button onclick="$('end').style.display='none';show('menu')">Menu</button></div>`}
+function rmUi(msg){$('rm').innerHTML=`<h2>Partida com amigos (Truco)</h2>${RM.room?`<p>Código da sala: <b style="font-size:30px;color:var(--gold)">${RM.code}</b></p><p>Na sala: ${Object.values(RM.nm).join(', ')||'—'}</p>${RM.host?`<button class=gold onclick="rmGo()">INICIAR PARTIDA</button> <small>Vagas vazias viram IA.</small>`:'<p>Aguardando o anfitrião iniciar...</p>'}`:`<p>Modo: ${[2,4].map(n=>`<button class="${RM.n==n?'gold':''}" onclick="RM.n=${n};rmUi()">${n==2?'1x1':'2x2'}</button>`).join(' ')} <button class=gold onclick="rmHost()">CRIAR SALA</button></p><p>Ou entre com um código: <input id=rc maxlength=6 size=6> <button onclick="rmJoin()">ENTRAR</button></p>`}<p>${msg||''}</p><button onclick="quit();show('menu')">Voltar</button>`;show('rm')}
+async function rmOpen(code){try{const room=await claude.use('room');if(!room)throw 0;return await room.join('tb-'+code)}catch(e){rmUi('Salas indisponíveis: abra a página logado, com o link compartilhado com permissão de colaborador.');return null}}
+async function rmHost(){const code=Math.random().toString(36).slice(2,6),r=await rmOpen(code);if(!r)return;Object.assign(RM,{room:r,code,host:1,g:0,started:0,seats:{},nm:{0:P.name},rs:[],free:RM.n==2?[1]:[1,2,3]});
+r.on('join',m=>{if(m.isMe||RM.started||RM.seats[m.peer]!=null||!RM.free.length)return;const s=RM.free.shift();RM.seats[m.peer]=s;RM.nm[s]=String(m.data&&m.data.n||'Jogador').slice(0,14);RM.rs.push(s);r.emit('seat',{p:m.peer,s,nm:RM.nm});rmUi()});
+r.on('act',m=>{const s=RM.seats[m.peer],a=m.data||{},w=RM.wait[s];if(s==null||!w||G.cur!=s)return;if(a.t=='p'){const c=G.h[s][a.i];if(!c)return;RM.wait[s]=0;w({card:c})}else if(a.t=='t'&&G.val<12&&!G.nr&&G.lr!=s%2){RM.wait[s]=0;w({truco:1})}});
+r.on('ans',m=>{const s=RM.seats[m.peer],w=RM.answ[s],a=m.data&&m.data.a;if(s==null||!w||!'aru'.includes(a))return;RM.answ[s]=0;RM.ask=null;w(a)});rmUi()}
+function rmGo(){RM.started=1;RM.room.emit('start',{n:RM.n});start(RM.n);G.names=G.names.map((x,i)=>i&&RM.nm[i]?RM.nm[i]:x);RM.full=G.names.map((x,i)=>i?(RM.nm[i]||'IA '+i):P.name)}
+async function rmJoin(){const code=($('rc').value||'').toLowerCase().trim(),r=await rmOpen(code);if(!r)return;Object.assign(RM,{room:r,code,g:1,host:0,seat:null,me:null,hp:null,nm:{}});
+r.on('join',m=>{if(m.isMe&&m.sameTab)RM.me=m.peer});r.on('seat',m=>{const d=m.data||{};RM.nm=d.nm||RM.nm;if(d.p==RM.me)RM.seat=d.s;rmUi()});
+r.on('start',m=>{if(RM.seat==null)return;RM.hp=m.peer;G={dead:0,n:m.data.n};$('end').style.display='none';show('game')});
+r.on('st',m=>{const d=m.data;if(m.peer!=RM.hp||!d||d.k!=RM.seat)return;G=d.v;render();gmod()});
+r.on('fx',m=>{if(m.peer!=RM.hp||!m.data)return;let t=String(m.data.t);if(RM.seat%2)t=t.replace(/Azul|Vermelha/g,x=>x=='Azul'?'Vermelha':'Azul');const f=$('fx');f.textContent=t;f.style.display='grid';f.classList.remove('z');void f.offsetWidth;f.classList.add('z');beep(500,.15);setTimeout(()=>f.style.display='none',m.data.ms||1000)});
+r.on('end',m=>{if(m.peer==RM.hp&&m.data)gEnd(m.data)});await sleep0(300);r.emit('join',{n:P.name});rmUi('Entrando na sala... aguarde a vaga.')}
+const sleep0=ms=>new Promise(r=>setTimeout(r,ms));
 theme();
 home();
 </script></body></html>
